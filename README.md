@@ -2,6 +2,10 @@
 
 A React Native library for creating beautiful and neat word (tag) cloud from any text with custom weight and color.
 
+## Screenshot
+![Simulator Screen Shot - iPhone 14 - 2023-11-20 at 19 01 02](https://github.com/jekingohel/react-native-wordcloud/assets/2361463/6c01e98b-6bc6-492e-892a-07c613b98868)
+
+
 ## Installation
 
 ```bash
