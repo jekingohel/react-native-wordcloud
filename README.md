@@ -23,7 +23,7 @@ const App = () => {
     { text: "exciting", value: 7, sentiment: "positive" },
     { text: "angry", value: 4, sentiment: "negative" },
     { text: "hopeful", value: 8, sentiment: "positive" },
-    { text: "inspiring", value: 9, sentiment: "positive" },
+    { text: "inspiring", value: 9, sentiment: "positive", color: "green" },
     { text: "dismal", value: 3, sentiment: "negative" },
     { text: "gloomy", value: 4, sentiment: "negative" },
     { text: "boring", value: 4, sentiment: "negative" },
