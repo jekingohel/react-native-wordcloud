@@ -9,14 +9,14 @@ A React Native library for creating beautiful and neat word (tag) cloud from any
 ## Installation
 
 ```bash
-npm install react-native-word-cloud
+npm install react-native-wordcloud
 ```
 
 ## Usage
 
 ```javascript
 import React from "react";
-import WordCloud from "react-native-word-cloud";
+import WordCloud from "react-native-wordcloud";
 
 const App = () => {
   const data = [
