@@ -1,0 +1,31 @@
+{
+  "name": "react-native-wordcloud",
+  "version": "1.0.0",
+  "author": "Jekin Gohel <jekin1991@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jekingohel/react-native-wordcloud.git"
+  },
+  "homepage": "https://github.com/jekingohel/react-native-wordcloud",
+  "bugs": "https://github.com/jekingohel/react-native-wordcloud/issues",
+  "description": "A React Native library for creating beautiful and neat word (tag) cloud from any text with custom weight and color.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react",
+    "react-native",
+    "word",
+    "cloud",
+    "wordcloud",
+    "word-cloud",
+    "buuble",
+    "bubble-chart",
+    "visualization",
+    "tag",
+    "tagcloud",
+    "tag-cloud"
+  ],
+  "license": "MIT"
+}
