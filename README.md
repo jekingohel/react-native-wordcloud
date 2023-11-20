@@ -7,7 +7,6 @@ A React Native library for creating beautiful and neat word (tag) cloud from any
 ```bash
 npm install react-native-word-cloud
 ```
-````
 
 ## Usage
 
