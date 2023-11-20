@@ -1,4 +1,3 @@
-````markdown
 # React Native Word Cloud
 
 A React Native library for creating beautiful and neat word (tag) cloud from any text with custom weight and color.
