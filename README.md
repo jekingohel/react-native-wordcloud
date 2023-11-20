@@ -12,7 +12,6 @@ npm install react-native-word-cloud
 
 ```javascript
 import React from "react";
-import { View, SafeAreaView } from "react-native";
 import WordCloud from "react-native-word-cloud";
 
 const App = () => {
@@ -34,22 +33,18 @@ const App = () => {
   ];
 
   return (
-    <SafeAreaView>
-      <View>
-        <WordCloud
-          options={{
-            words: data,
-            verticalEnabled: true,
-            minFont: 10,
-            maxFont: 50,
-            fontOffset: 1,
-            width: 390,
-            height: 250,
-            fontFamily: "Arial"
-          }}
-        />
-      </View>
-    </SafeAreaView>
+    <WordCloud
+      options={{
+        words: data,
+        verticalEnabled: true,
+        minFont: 10,
+        maxFont: 50,
+        fontOffset: 1,
+        width: 390,
+        height: 250,
+        fontFamily: "Arial"
+      }}
+    />
   );
 };
 
