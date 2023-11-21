@@ -1,4 +1,4 @@
-import WordCloud from "./components/wordcloud"
+import WordCloud from "rn-wordcloud"
 
 export default function App() {
   const data = [
