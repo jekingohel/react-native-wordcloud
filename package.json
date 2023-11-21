@@ -1,5 +1,5 @@
 {
-  "name": "react-native-wordcloud",
+  "name": "rn-wordcloud",
   "version": "1.0.0",
   "author": "Jekin Gohel <jekin1991@gmail.com>",
   "repository": {
@@ -27,5 +27,8 @@
     "tagcloud",
     "tag-cloud"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "prop-types": "^15.8.1"
+  }
 }

@@ -1,6 +1,6 @@
 import React from "react"
 import { View, Text } from "react-native"
-
+import PropTypes from "prop-types"
 import Word from "./word"
 import Space from "./space"
 import Util, { spaceTypes } from "./util"
@@ -428,6 +428,38 @@ class WordCloud extends React.Component {
       </View>
     )
   }
+}
+
+WordCloud.propTypes = {
+  options: PropTypes.shape({
+    words: PropTypes.arrayOf(
+      PropTypes.shape({
+        text: PropTypes.string.isRequired,
+        value: PropTypes.number.isRequired,
+        color: PropTypes.string,
+      })
+    ).isRequired,
+    verticalEnabled: PropTypes.bool,
+    minFont: PropTypes.number,
+    maxFont: PropTypes.number,
+    fontOffset: PropTypes.number,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    fontFamily: PropTypes.string,
+  }).isRequired,
+}
+
+WordCloud.defaultProps = {
+  options: {
+    words: [],
+    verticalEnabled: true,
+    minFont: 10,
+    maxFont: 50,
+    fontOffset: 1,
+    width: 300,
+    height: 200,
+    fontFamily: "",
+  },
 }
 
 export default WordCloud
