@@ -1,59 +1,59 @@
-import React from "react"
-import { View, Text } from "react-native"
-import PropTypes from "prop-types"
-import Word from "./word"
-import Space from "./space"
-import Util, { spaceTypes } from "./util"
+import React from "react";
+import { View, Text, Touchable, TouchableOpacity } from "react-native";
+import PropTypes from "prop-types";
+import Word from "./word";
+import Space from "./space";
+import Util, { spaceTypes } from "./util";
 
 class WordCloud extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       words: [],
-    }
+    };
 
-    this.spaceDataObject = null
-    this.spaceIdArray = null
-    this.distanceCounter = 1
+    this.spaceDataObject = null;
+    this.spaceIdArray = null;
+    this.distanceCounter = 1;
 
     this.target = {
       width: props.options.width,
       height: props.options.height,
       xOffset: props.options.width / 2,
       yOffset: props.options.height / 2,
-    }
+    };
 
-    this._placeFirstWord = this._placeFirstWord.bind(this)
-    this._placeOtherWord = this._placeOtherWord.bind(this)
+    this._placeFirstWord = this._placeFirstWord.bind(this);
+    this._placeOtherWord = this._placeOtherWord.bind(this);
   }
 
   componentDidMount() {
-    this._init(this.props.options)
+    this._init(this.props.options, this.props.onWordPress);
   }
 
-  _init(options) {
-    this.spaceDataObject = {}
-    this.spaceIdArray = []
+  _init(options, onWordPress = null) {
+    this.spaceDataObject = {};
+    this.spaceIdArray = [];
     const {
       words: initialWords,
       fontOffset,
       minFont,
       maxFont,
       fontFamily,
-    } = options
+    } = options;
     initialWords.sort(function (a, b) {
       if (a.value < b.value) {
-        return 1
+        return 1;
       } else if (a.value > b.value) {
-        return -1
+        return -1;
       } else {
-        return 0
+        return 0;
       }
-    })
+    });
 
-    const _maxValue = initialWords[0].value
-    const _minValue = initialWords[initialWords.length - 1].value
-    const fontFactor = (maxFont - minFont) / (_maxValue - _minValue)
+    const _maxValue = initialWords[0].value;
+    const _minValue = initialWords[initialWords.length - 1].value;
+    const fontFactor = (maxFont - minFont) / (_maxValue - _minValue);
 
     const wordsArray = initialWords.map((wordConfig, index) => {
       const word = new Word({
@@ -66,33 +66,34 @@ class WordCloud extends React.Component {
         index,
         _placeFirstWord: this._placeFirstWord,
         _placeOtherWord: this._placeOtherWord,
-      })
-      return word
-    })
+        onWordPress,
+      });
+      return word;
+    });
     this.setState({
       words: wordsArray,
-    })
+    });
   }
 
   _draw() {
-    const { words } = this.state
-    if (words.length === 0) return null
+    const { words } = this.state;
+    if (words.length === 0) return null;
     return words.map((word) => {
-      return word.view
-    })
+      return word.view;
+    });
   }
 
   _updateSpaceIdArray(distanceS, distance) {
     if (this.spaceIdArray.length !== 0) {
       for (let index = 0; index < this.spaceIdArray.length; index++) {
         if (distance < parseFloat(this.spaceIdArray[index].split("_")[0])) {
-          this.spaceIdArray.splice(index, 0, distanceS)
-          return
+          this.spaceIdArray.splice(index, 0, distanceS);
+          return;
         }
       }
-      this.spaceIdArray.push(distanceS)
+      this.spaceIdArray.push(distanceS);
     } else {
-      this.spaceIdArray.push(distanceS)
+      this.spaceIdArray.push(distanceS);
     }
   }
 
@@ -101,36 +102,37 @@ class WordCloud extends React.Component {
     const distance = Math.sqrt(
       (this.target.xOffset - x) * (this.target.xOffset - x) +
         (this.target.yOffset - y) * (this.target.yOffset - y)
-    )
+    );
 
-    const distanceS = `${distance}_${this.distanceCounter++}`
+    const distanceS = `${distance}_${this.distanceCounter++}`;
 
     // Update Space Id Array
-    this._updateSpaceIdArray(distanceS, distance)
+    this._updateSpaceIdArray(distanceS, distance);
 
     // Add Space into Space Data Object
-    this.spaceDataObject[distanceS] = new Space(type, w, h, x, y)
+    this.spaceDataObject[distanceS] = new Space(type, w, h, x, y);
   }
 
   _updateTextPosition(word, top, left, transform = false) {
     // Update the styles of the word view
-    const textStyle = {
+    const buttonStyle = {
       position: "absolute",
       left,
       top,
+      transform: [{ rotate: transform ? "270deg" : "0deg" }],
+    };
+    const textStyle = {
       fontSize: word.font,
       lineHeight: word.font,
-      transform: [{ rotate: transform ? "270deg" : "0deg" }],
-    }
+    };
     if (word.color && word.color !== null && word.color !== "") {
-      textStyle.color = word.color
+      textStyle.color = word.color;
     } else {
-      textStyle.color = Util.getRandomColor()
+      textStyle.color = Util.getRandomColor();
     }
     if (word.fontFamily && word.fontFamily !== "") {
-      textStyle.fontFamily = word.fontFamily
+      textStyle.fontFamily = word.fontFamily;
     }
-
     this.setState((prevState) => ({
       words: prevState.words.map((prevWord) =>
         prevWord === word
@@ -138,38 +140,57 @@ class WordCloud extends React.Component {
               ...prevWord,
               view:
                 (prevWord.view && (
-                  <Text key={word.text} style={textStyle}>
-                    {word.text}
-                  </Text>
+                  <TouchableOpacity
+                    key={word.text}
+                    style={buttonStyle}
+                    onPress={() =>
+                      word._onWordPress &&
+                      word._onWordPress({ text: word.text, value: word.value })
+                    }
+                  >
+                    <Text style={textStyle}>{word.text}</Text>
+                  </TouchableOpacity>
                 )) ||
                 null,
             }
           : prevWord
       ),
-    }))
+    }));
   }
 
   _placeFirstWord(word) {
-    const w = word.width
-    const h = word.height
-    const xoff = this.target.xOffset - w / 2
-    const yoff = this.target.yOffset - h / 2
-    const tw = this.target.width
-    const th = this.target.height
+    const w = word.width;
+    const h = word.height;
+    const xoff = this.target.xOffset - w / 2;
+    const yoff = this.target.yOffset - h / 2;
+    const tw = this.target.width;
+    const th = this.target.height;
 
     // Update the styles of the word view
-    this._updateTextPosition(word, yoff, xoff)
+    this._updateTextPosition(word, yoff, xoff);
 
     // Call the pushSpaceData function with the appropriate parameters
-    this._pushSpaceData(spaceTypes.LB, tw - xoff - w, h, xoff + w, yoff + h / 2) //M1
-    this._pushSpaceData(spaceTypes.LT, w, th - yoff - h, xoff + w / 2, yoff + h) //M2
-    this._pushSpaceData(spaceTypes.RT, xoff, h, xoff, yoff + h / 2) //M3
-    this._pushSpaceData(spaceTypes.RB, w, yoff, xoff + w / 2, yoff) //M4
+    this._pushSpaceData(
+      spaceTypes.LB,
+      tw - xoff - w,
+      h,
+      xoff + w,
+      yoff + h / 2
+    ); //M1
+    this._pushSpaceData(
+      spaceTypes.LT,
+      w,
+      th - yoff - h,
+      xoff + w / 2,
+      yoff + h
+    ); //M2
+    this._pushSpaceData(spaceTypes.RT, xoff, h, xoff, yoff + h / 2); //M3
+    this._pushSpaceData(spaceTypes.RB, w, yoff, xoff + w / 2, yoff); //M4
 
-    this._pushSpaceData(spaceTypes.LT, w / 2, h / 2, xoff + w, yoff + h / 2) //C1
-    this._pushSpaceData(spaceTypes.RT, w / 2, h / 2, xoff + w / 2, yoff + h) //C2
-    this._pushSpaceData(spaceTypes.RB, w / 2, h / 2, xoff, yoff + h / 2) //C3
-    this._pushSpaceData(spaceTypes.LB, w / 2, h / 2, xoff + w / 2, yoff) //C4
+    this._pushSpaceData(spaceTypes.LT, w / 2, h / 2, xoff + w, yoff + h / 2); //C1
+    this._pushSpaceData(spaceTypes.RT, w / 2, h / 2, xoff + w / 2, yoff + h); //C2
+    this._pushSpaceData(spaceTypes.RB, w / 2, h / 2, xoff, yoff + h / 2); //C3
+    this._pushSpaceData(spaceTypes.LB, w / 2, h / 2, xoff + w / 2, yoff); //C4
 
     this._pushSpaceData(
       spaceTypes.LT,
@@ -177,89 +198,89 @@ class WordCloud extends React.Component {
       th - yoff - h / 2,
       xoff + w + w / 2,
       yoff + h / 2
-    ) //S1
+    ); //S1
     this._pushSpaceData(
       spaceTypes.RT,
       xoff + w / 2,
       th - yoff - h - h / 2,
       xoff + w / 2,
       yoff + h + h / 2
-    ) //S2
+    ); //S2
     this._pushSpaceData(
       spaceTypes.RB,
       xoff - w / 2,
       yoff + h / 2,
       xoff - w / 2,
       yoff + h / 2
-    ) //S3
+    ); //S3
     this._pushSpaceData(
       spaceTypes.LB,
       xoff + w / 2,
       yoff - h / 2,
       xoff + w / 2,
       yoff - h / 2
-    ) //S4
+    ); //S4
   }
 
   _placeOtherWord(word) {
     for (let index = 0; index < this.spaceIdArray.length; index++) {
-      const spaceId = this.spaceIdArray[index]
-      const obj = this.spaceDataObject[spaceId]
+      const spaceId = this.spaceIdArray[index];
+      const obj = this.spaceDataObject[spaceId];
 
-      let alignmentInd = 0
-      let alignmentIndCount = 0
+      let alignmentInd = 0;
+      let alignmentIndCount = 0;
 
       if (word.width <= obj.width && word.height <= obj.height) {
-        alignmentInd = spaceTypes.HR
-        alignmentIndCount++
+        alignmentInd = spaceTypes.HR;
+        alignmentIndCount++;
       }
 
       if (this.props.options.verticalEnabled) {
         if (word.height <= obj.width && word.width <= obj.height) {
-          alignmentInd = spaceTypes.VR
-          alignmentIndCount++
+          alignmentInd = spaceTypes.VR;
+          alignmentIndCount++;
         }
       }
 
       if (alignmentIndCount > 0) {
-        this.spaceDataObject[spaceId] = null
-        this.spaceIdArray.splice(index, 1)
+        this.spaceDataObject[spaceId] = null;
+        this.spaceIdArray.splice(index, 1);
 
         // For Word's Span Position
-        let xMul = 1
-        let yMul = 1
+        let xMul = 1;
+        let yMul = 1;
 
         // For new Child Spaces
-        let xMulS = 1
-        let yMulS = 1
+        let xMulS = 1;
+        let yMulS = 1;
 
         switch (obj.spaceType) {
           case spaceTypes.LB:
-            xMul = 0
-            yMul = -1
-            xMulS = 1
-            yMulS = -1
-            break
+            xMul = 0;
+            yMul = -1;
+            xMulS = 1;
+            yMulS = -1;
+            break;
           case spaceTypes.LT:
-            xMul = 0
-            yMul = 0
-            xMulS = 1
-            yMulS = 1
-            break
+            xMul = 0;
+            yMul = 0;
+            xMulS = 1;
+            yMulS = 1;
+            break;
           case spaceTypes.RT:
-            xMul = -1
-            yMul = 0
-            xMulS = -1
-            yMulS = 1
-            break
+            xMul = -1;
+            yMul = 0;
+            xMulS = -1;
+            yMulS = 1;
+            break;
           case spaceTypes.RB:
-            xMul = -1
-            yMul = -1
-            xMulS = -1
-            yMulS = -1
-            break
+            xMul = -1;
+            yMul = -1;
+            xMulS = -1;
+            yMulS = -1;
+            break;
           default:
-            break
+            break;
         }
 
         if (alignmentIndCount > 1) {
@@ -267,17 +288,17 @@ class WordCloud extends React.Component {
           // Random number[0,5] is >0 and <3 --> HR
           // Random number[0,5] is >3 --> VR
 
-          if (Math.random() * 5 > 3) alignmentInd = spaceTypes.VR
-          else alignmentInd = spaceTypes.HR
+          if (Math.random() * 5 > 3) alignmentInd = spaceTypes.VR;
+          else alignmentInd = spaceTypes.HR;
         }
 
-        const w = word.width
-        const h = word.height
+        const w = word.width;
+        const h = word.height;
 
         switch (alignmentInd) {
           case spaceTypes.HR:
             // Update the styles of the word view
-            this._updateTextPosition(word, obj.y + yMul * h, obj.x + xMul * w)
+            this._updateTextPosition(word, obj.y + yMul * h, obj.x + xMul * w);
 
             if (Math.random() * 2 > 1) {
               /*
@@ -299,14 +320,14 @@ class WordCloud extends React.Component {
                 h,
                 obj.x + xMulS * w,
                 obj.y
-              ) //R
+              ); //R
               this._pushSpaceData(
                 obj.spaceType,
                 obj.width,
                 obj.height - h,
                 obj.x,
                 obj.y + yMulS * h
-              ) //T
+              ); //T
             } else {
               /*
                * 			_________________________________
@@ -327,16 +348,16 @@ class WordCloud extends React.Component {
                 obj.height,
                 obj.x + xMulS * w,
                 obj.y
-              ) //R
+              ); //R
               this._pushSpaceData(
                 obj.spaceType,
                 w,
                 obj.height - h,
                 obj.x,
                 obj.y + yMulS * h
-              ) //T
+              ); //T
             }
-            break
+            break;
 
           case spaceTypes.VR:
             // Update the styles of the word view
@@ -345,7 +366,7 @@ class WordCloud extends React.Component {
               obj.y + yMul * w + (w - h) / 2,
               obj.x + xMul * h - (w - h) / 2,
               true
-            )
+            );
 
             if (Math.random() * 2 > 1) {
               /*
@@ -367,14 +388,14 @@ class WordCloud extends React.Component {
                 w,
                 obj.x + xMulS * h,
                 obj.y
-              ) //R
+              ); //R
               this._pushSpaceData(
                 obj.spaceType,
                 obj.width,
                 obj.height - w,
                 obj.x,
                 obj.y + yMulS * w
-              ) //T
+              ); //T
             } else {
               /*
                * 			_________________________________
@@ -395,22 +416,22 @@ class WordCloud extends React.Component {
                 obj.height,
                 obj.x + xMulS * h,
                 obj.y
-              ) //R
+              ); //R
               this._pushSpaceData(
                 obj.spaceType,
                 h,
                 obj.height - w,
                 obj.x,
                 obj.y + yMulS * w
-              ) //T
+              ); //T
             }
-            break
+            break;
 
           default:
-            break
+            break;
         }
 
-        return
+        return;
       }
     }
   }
@@ -426,7 +447,7 @@ class WordCloud extends React.Component {
       >
         {this._draw()}
       </View>
-    )
+    );
   }
 }
 
@@ -447,7 +468,8 @@ WordCloud.propTypes = {
     height: PropTypes.number.isRequired,
     fontFamily: PropTypes.string,
   }).isRequired,
-}
+  onWordPress: PropTypes.func,
+};
 
 WordCloud.defaultProps = {
   options: {
@@ -460,6 +482,7 @@ WordCloud.defaultProps = {
     height: 200,
     fontFamily: "",
   },
-}
+  onWordPress: null,
+};
 
-export default WordCloud
+export default WordCloud;

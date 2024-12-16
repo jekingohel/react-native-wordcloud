@@ -1,4 +1,4 @@
-import WordCloud from "rn-wordcloud"
+import WordCloud from "./wordcloud";
 
 export default function App() {
   const data = [
@@ -63,7 +63,12 @@ export default function App() {
     { text: "tranquil", value: 7 },
     { text: "ecstatic", value: 9 },
     { text: "exultant", value: 9 },
-  ]
+  ];
+
+  const handleWordClick = (word) => {
+    console.log("Word details:", word);
+  };
+
   return (
     <WordCloud
       options={{
@@ -73,9 +78,10 @@ export default function App() {
         maxFont: 50,
         fontOffset: 0.9,
         width: 390,
-        height: 844,
+        height: 744,
         fontFamily: "",
       }}
+      onWordPress={handleWordClick}
     />
-  )
+  );
 }
