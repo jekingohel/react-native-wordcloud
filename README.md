@@ -36,6 +36,10 @@ const App = () => {
     // Add more words as needed
   ]
 
+  const handleWordClick = (word) => {
+    console.log("Word details:", word);
+  };
+
   return (
     <WordCloud
       options={{
@@ -48,6 +52,7 @@ const App = () => {
         height: 250,
         fontFamily: "Arial",
       }}
+      onWordPress={handleWordClick}
     />
   )
 }
@@ -76,6 +81,16 @@ An object containing configuration options for the WordCloud component.
 - `height` (number, required): Height of the word cloud container.
 
 - `fontFamily` (string, optional): Default font family for words.
+
+### `onWordPress` (function)
+
+- A callback function that is triggered when a word in the word cloud is pressed. The function receives an object containing details about the word that was pressed.
+
+#### Parameters
+
+- `text` (string): The word text.
+
+- `value` (number): The weight/importance of the word.
 
 ## License
 
